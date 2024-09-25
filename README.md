@@ -1,5 +1,5 @@
 # Python Backend Railway
-Python バックエンド編 初級
+Python バックエンド 初級編
 
 ## 環境構築
 

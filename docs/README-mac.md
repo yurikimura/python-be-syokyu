@@ -2,11 +2,17 @@
 
 ## 概要
 
-TechTrain Railway の問題を解くために必要な下記ツールのインストール方法と環境構築の手順を解説します。
+Python Railway の問題を解くために必要な下記ツールのインストール方法と環境構築の手順を解説します。
 - Python 3.12
 - Docker
 - Visual Studio Code
 - Git
+
+上記のうち、Visual Studio Code と Git についてのインストール方法は、
+[Railway 準備編](https://www.notion.so/techbowl/Railway-ceba695d5014460e9733c2a46318cdec) をご確認いただき、挑戦の準備をしてください。
+
+その他リポジトリの更新の仕方や、トラブルシューティングについても上記の Railway 準備編にございます。
+何かあった際は、まずそちらを確認しましょう。
 
 ## 手順
 1. Pythonのインストール

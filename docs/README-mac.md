@@ -61,13 +61,13 @@ Python Railway の問題を解くために必要な下記ツールのインス�
     - VSCodeにて 「 Cmd + Shift + P 」 でVSCodeのコマンドパレットを開きます。コマンドパレットにて 「 `Python: インタープリターを選択` 」を選択します。
 
         以下のように途中まで入力すると選択肢が絞られていって見つけやすくなると思います。
-        ![](vscode_select_python_interpreter.png)
+        ![](./images/vscode_select_python_interpreter.png)
     - 選択後、インタープリターの一覧が表示されますが、以下の`./.venv/bin/python` がパスとして表示されているものを選択してください。
-        ![](vscode_python_interpreter_list.png)
+        ![](./images/vscode_python_interpreter_list.png)
     - 上記で対応完了となります。現在どこのPythonインタープリターが選択されているかは、VSCodeで`.py`ファイルを開くと、VSCodeのウィンドウ最下部に表示されます。
-        ![](vscode_current_python_interpreter.png)
+        ![](./images/vscode_current_python_interpreter.png)
     - また、`.venv`配下のPythonインタープリターを選択していると、VSCode上でターミナルを新規で開いた時に予めターミナル上でもvenvの仮想環境が有効になった状態でターミナルが起動されます。
-    ![](vscode_terminal_with_venv.png)
+    ![](./images/vscode_terminal_with_venv.png)
 8. 利用するPythonパッケージをPython仮想環境配下にインストール
     - 上記の手順にて VSCodeのターミナルで venvが有効になっている状態で立ち上がる旨説明しました。
     - venvが有効かされている状態のターミナルで以下を実行し、仮想環境下で必要なPythonパッケージをインストールします。

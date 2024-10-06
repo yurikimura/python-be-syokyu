@@ -2,19 +2,19 @@
 Python バックエンド 初級編
 
 ## 環境構築
+Python Railway の問題を解くために必要な下記ツールのインストール方法と環境構築の手順を解説します。
+- Python 3.12
+- Docker
+- Visual Studio Code
+- Git
 
-1. Python 3.12
-2. Docker Desktop
-3. Visual Studio Code
-4. Git
+上記のうち、Visual Studio Code と Git についてのインストール方法は、
+[Railway 準備編](https://www.notion.so/techbowl/Railway-ceba695d5014460e9733c2a46318cdec) をご確認いただき、挑戦の準備をしてください。
 
-上記は必ずインストールした上で始めてください。
+その他リポジトリの更新の仕方や、トラブルシューティングについても上記の Railway 準備編にございます。
+何かあった際は、まずそちらを確認しましょう。
 
-### Macにおける環境構築
-[MacOSにおける環境構築について](./docs/README-mac.md) を参照ください。
-
-### Windows における環境構築
-[Windowsにおける環境構築について](./docs/README-windows.md) を参照ください。
+Python や Docker のセットアップについては、実際にStationに取り組みながら実施していきます。
 
 ## このRailwayについて
 このRailwayで扱う技術要素やカバーする範囲、利用する開発環境について説明します。

@@ -1,6 +1,7 @@
 {
     "railwayId": 99999,
     "stations": {
+        "0": "station00.json",
         "1": "station01.json",
         "2": "station02.json",
         "3": "station03.json",

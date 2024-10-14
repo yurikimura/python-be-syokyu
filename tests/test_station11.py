@@ -1,4 +1,3 @@
-import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
 
@@ -9,11 +8,7 @@ from app.models import item_model, list_model
 client = TestClient(app)
 
 
-@pytest.mark.parametrize("status_code", [
-    (TodoItemStatusCode.COMPLETED.value),
-    (TodoItemStatusCode.NOT_COMPLETED.value),
-])
-def test_put_todo_item(status_code: int, db_session) -> None:
+def test_post_todo_item(db_session) -> None:
     """Station11合格判定テストコード."""
     # ******************
     # 事前準備
@@ -24,30 +19,15 @@ def test_put_todo_item(status_code: int, db_session) -> None:
     db_session.commit()
     db_session.refresh(db_todo_list)
 
-    # テスト用にTODO項目をインサート
-    db_todo_item = item_model.ItemModel(
-        todo_list_id=db_todo_list.id,
-        title="station11_test",
-        description="A test record for station11.",
-        status_code=1,
-    )
-    db_session.add(db_todo_item)
-    db_session.commit()
-
     # ******************
     # テスト実行
     # ******************
     target_todo_list_id = db_todo_list.id
-    target_todo_item_id = db_todo_item.id
-    response = client.put(
-        f"/lists/{target_todo_list_id}/items/{target_todo_item_id}",
-        json={
-            "title": "updated_station11_test",
-            "description": "An updated test record for station11.",
-            "due_at": "2024-09-08T12:54:53",
-            "complete": status_code == TodoItemStatusCode.COMPLETED.value,
-        },
-    )
+    response = client.post(f"/lists/{target_todo_list_id}/items", json={
+        "title": "station11_test",
+        "description": "A test record for station11.",
+        "due_at": "2024-09-08T12:47:23",
+    })
 
     # ******************
     # 実行結果の検証開始
@@ -60,12 +40,11 @@ def test_put_todo_item(status_code: int, db_session) -> None:
 
     # レスポンスBodyの確認
     response_body = response.json()
-    db_todo_item = db_session.query(item_model.ItemModel).filter(item_model.ItemModel.id == target_todo_item_id).first()
-    assert response_body["id"] == target_todo_item_id
+    db_todo_item = db_session.query(item_model.ItemModel).filter(item_model.ItemModel.id == response_body["id"]).first()
     assert response_body["todo_list_id"] == target_todo_list_id
-    assert response_body["title"] == "updated_station11_test"
-    assert response_body["description"] == "An updated test record for station11."
-    assert response_body["status_code"] == status_code
-    assert response_body["due_at"] == "2024-09-08T12:54:53"
+    assert response_body["title"] == "station11_test"
+    assert response_body["description"] == "A test record for station11."
+    assert response_body["status_code"] == TodoItemStatusCode.NOT_COMPLETED.value
+    assert response_body["due_at"] == db_todo_item.due_at.strftime("%Y-%m-%dT%H:%M:%S")
     assert response_body["created_at"] == db_todo_item.created_at.strftime("%Y-%m-%dT%H:%M:%S")
     assert response_body["updated_at"] == db_todo_item.updated_at.strftime("%Y-%m-%dT%H:%M:%S")

@@ -1,30 +1,17 @@
-from fastapi import status
 from fastapi.testclient import TestClient
+from sqlalchemy import inspect
 
+from app.database import engine
 from app.main import app
-from app.models import list_model
 
 client = TestClient(app)
 
 
-def test_get_todo_list(db_session):
+def test_tables():
     """Station05合格判定テストコード."""
-    db_item = list_model.ListModel(title="station05_test", description="A test record for station05.")
+    inspector = inspect(engine)
 
-    # テスト用にインサート
-    db_session.add(db_item)
-    db_session.commit()
-    db_session.refresh(db_item)
+    target_table_names = ["todo_lists", "todo_items"]
+    existed_table = [table_name for table_name in inspector.get_table_names() if table_name in target_table_names]
 
-    # テスト実行
-    response = client.get(f"/lists/{db_item.id}")
-
-    # 実行結果の検証
-    assert response.status_code == status.HTTP_200_OK
-
-    response_body = response.json()
-    assert response_body["id"] == db_item.id
-    assert response_body["title"] == "station05_test"
-    assert response_body["description"] == "A test record for station05."
-    assert response_body["created_at"] == db_item.created_at.strftime("%Y-%m-%dT%H:%M:%S")
-    assert response_body["updated_at"] == db_item.updated_at.strftime("%Y-%m-%dT%H:%M:%S")
+    assert sorted(target_table_names) == sorted(existed_table)

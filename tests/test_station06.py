@@ -7,25 +7,24 @@ from app.models import list_model
 client = TestClient(app)
 
 
-def test_post_todo_list(db_session) -> None:
+def test_get_todo_list(db_session):
     """Station06合格判定テストコード."""
+    db_item = list_model.ListModel(title="station06_test", description="A test record for station06.")
+
+    # テスト用にインサート
+    db_session.add(db_item)
+    db_session.commit()
+    db_session.refresh(db_item)
+
     # テスト実行
-    response = client.post("/lists", json={
-        "title": "test_todo_station_06",
-        "description": "This todo was made by the test of Station06.",
-    })
+    response = client.get(f"/lists/{db_item.id}")
 
     # 実行結果の検証
     assert response.status_code == status.HTTP_200_OK
 
     response_body = response.json()
-    db_item = db_session.query(list_model.ListModel).filter(list_model.ListModel.id == response_body["id"]).first()
-
-    if db_item is None:
-        msg = "POSTしたデータがレスポンス情報に基づいて取得できませんでした。"
-        raise AssertionError(msg)
-
-    assert response_body["title"] == "test_todo_station_06"
-    assert response_body["description"] == "This todo was made by the test of Station06."
+    assert response_body["id"] == db_item.id
+    assert response_body["title"] == "station06_test"
+    assert response_body["description"] == "A test record for station06."
     assert response_body["created_at"] == db_item.created_at.strftime("%Y-%m-%dT%H:%M:%S")
     assert response_body["updated_at"] == db_item.updated_at.strftime("%Y-%m-%dT%H:%M:%S")

@@ -8,7 +8,7 @@ from app.models import item_model, list_model
 client = TestClient(app)
 
 
-def test_post_todo_item(db_session) -> None:
+def test_get_todo_item(db_session) -> None:
     """Station10合格判定テストコード."""
     # ******************
     # 事前準備
@@ -17,17 +17,23 @@ def test_post_todo_item(db_session) -> None:
     db_todo_list = list_model.ListModel(title="station10_test", description="A test record for station10.")
     db_session.add(db_todo_list)
     db_session.commit()
-    db_session.refresh(db_todo_list)
+
+    # テスト用にTODO項目をインサート
+    db_todo_item = item_model.ItemModel(
+        todo_list_id=db_todo_list.id,
+        title="station10_test",
+        description="A test record for station10.",
+        status_code=1,
+    )
+    db_session.add(db_todo_item)
+    db_session.commit()
 
     # ******************
     # テスト実行
     # ******************
     target_todo_list_id = db_todo_list.id
-    response = client.post(f"/lists/{target_todo_list_id}/items", json={
-        "title": "station10_test",
-        "description": "A test record for station10.",
-        "due_at": "2024-09-08T12:47:23",
-    })
+    target_todo_item_id = db_todo_item.id
+    response = client.get(f"/lists/{target_todo_list_id}/items/{target_todo_item_id}")
 
     # ******************
     # 実行結果の検証開始
@@ -40,11 +46,12 @@ def test_post_todo_item(db_session) -> None:
 
     # レスポンスBodyの確認
     response_body = response.json()
-    db_todo_item = db_session.query(item_model.ItemModel).filter(item_model.ItemModel.id == response_body["id"]).first()
+    db_todo_item = db_session.query(item_model.ItemModel).filter(item_model.ItemModel.id == target_todo_item_id).first()
+    assert response_body["id"] == target_todo_item_id
     assert response_body["todo_list_id"] == target_todo_list_id
     assert response_body["title"] == "station10_test"
     assert response_body["description"] == "A test record for station10."
     assert response_body["status_code"] == TodoItemStatusCode.NOT_COMPLETED.value
-    assert response_body["due_at"] == db_todo_item.due_at.strftime("%Y-%m-%dT%H:%M:%S")
+    assert response_body["due_at"] is None
     assert response_body["created_at"] == db_todo_item.created_at.strftime("%Y-%m-%dT%H:%M:%S")
     assert response_body["updated_at"] == db_todo_item.updated_at.strftime("%Y-%m-%dT%H:%M:%S")

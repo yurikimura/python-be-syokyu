@@ -1,4 +1,3 @@
-import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
 
@@ -7,79 +6,75 @@ from app.models import item_model, list_model
 
 client = TestClient(app)
 
-NUM_OF_RECORDS = 15
 
-
-@pytest.mark.parametrize(("per_page", "page"), [
-    (10, 1),
-    (10, 2),
-])
-def test_get_todo_lists_pagination(per_page: int, page: int, db_session) -> None:
+def test_get_todo_item_404_list_not_found(db_session) -> None:
     """Station17合格判定テストコード."""
-    db_todo_lists = [list_model.ListModel(
-        title=f"station17_test_{str(i).zfill(3)}",
-        description="A test record for station17.") for i in range(NUM_OF_RECORDS)]
-    db_session.add_all(db_todo_lists)
-    db_session.commit()
-    for x in db_todo_lists:
-        db_session.refresh(x)
-
     # ******************
-    # テスト実行
+    # 事前準備
     # ******************
-    response = client.get("/lists", params={
-        "per_page": per_page,
-        "page": page,
-    })
-
-    # ******************
-    # 実行結果の検証開始
-    # ******************
-    # ステータスコードの確認
-    assert response.status_code == status.HTTP_200_OK
-
-    # レスポンスBodyの確認
-    response_body = response.json()
-    assert len(response_body) == per_page if per_page * page <= NUM_OF_RECORDS else NUM_OF_RECORDS % per_page
-
-    actual_data_ids = sorted([x["id"]  for x in response_body])
-    expected_data_ids = sorted([x.id  for x in db_todo_lists])
-
-    idx_from = per_page * (page - 1)
-    idx_to = per_page * page
-    assert actual_data_ids == expected_data_ids[idx_from:idx_to]
-
-
-@pytest.mark.parametrize(("per_page", "page"), [
-    (10, 1),
-    (10, 2),
-])
-def test_get_todo_items_pagination(per_page: int, page: int, db_session) -> None:
-    """Station17合格判定テストコード."""
-    db_todo_list = list_model.ListModel(
-        title="station17_test_001",
-        description="A test record for station17.")
+    # テスト用にTODOリストをインサート
+    db_todo_list = list_model.ListModel(title="station17_test", description="A test record for station17.")
     db_session.add(db_todo_list)
     db_session.commit()
     db_session.refresh(db_todo_list)
 
-    todo_list_id = db_todo_list.id
-    db_todo_items = [item_model.ItemModel(
-        todo_list_id=todo_list_id,
-        title=f"station17_test_{str(i).zfill(3)}",
-        description="A test record for station17.", status_code=1) for i in range(NUM_OF_RECORDS)]
-    db_session.add_all(db_todo_items)
+    # テスト用にTODO項目をインサート
+    db_todo_item = item_model.ItemModel(
+        todo_list_id=db_todo_list.id,
+        title="station17_test",
+        description="A test record for station17.",
+        status_code=1,
+    )
+    db_session.add(db_todo_item)
     db_session.commit()
-    for x in db_todo_items:
-        db_session.refresh(x)
 
+    target_todo_item_id = db_todo_item.id
+
+    # ******************
+    # テスト実行_01
+    # ******************
+    response = client.get(f"/lists/-1/items/{target_todo_item_id}")
+
+    # ******************
+    # 実行結果の検証開始_01
+    # ******************
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_get_todo_item_404_item_not_found(db_session) -> None:
+    """Station17合格判定テストコード."""
+    # ******************
+    # 事前準備
+    # ******************
+    # テスト用にTODOリストをインサート
+    db_todo_list = list_model.ListModel(title="station17_test", description="A test record for station17.")
+    db_session.add(db_todo_list)
+    db_session.commit()
+    db_session.refresh(db_todo_list)
+
+    target_todo_list_id = db_todo_list.id
+
+    # ******************
+    # テスト実行_02
+    # ******************
+    target_todo_list_id = db_todo_list.id
+    response = client.get(f"/lists/{target_todo_list_id}/items/-1")
+
+    # ******************
+    # 実行結果の検証開始_02
+    # ******************
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_post_todo_item_404_list_not_found() -> None:
+    """Station17合格判定テストコード."""
     # ******************
     # テスト実行
     # ******************
-    todo_list_id = db_todo_list.id
-    response = client.get(f"/lists/{todo_list_id}/items", params={
-        "per_page": per_page,
-        "page": page,
+    response = client.post("/lists/-1/items", json={
+        "title": "station17_test",
+        "description": "A test record for station17.",
+        "due_at": "2024-09-08T16:47:23",
     })
 
     # ******************
@@ -87,15 +82,165 @@ def test_get_todo_items_pagination(per_page: int, page: int, db_session) -> None
     # ******************
 
     # ステータスコードの確認
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    # レスポンスBodyの確認
-    response_body = response.json()
-    assert len(response_body) == per_page if per_page * page <= NUM_OF_RECORDS else NUM_OF_RECORDS % per_page
 
-    actual_data_ids = sorted([x["id"]  for x in response_body])
-    expected_data_ids = sorted([x.id  for x in db_todo_items])
+def test_post_todo_item_422_validation_error(db_session) -> None:
+    """Station17合格判定テストコード."""
+    # ******************
+    # 事前準備
+    # ******************
+    # テスト用にTODOリストをインサート
+    db_todo_list = list_model.ListModel(title="station17_test", description="A test record for station17.")
+    db_session.add(db_todo_list)
+    db_session.commit()
+    db_session.refresh(db_todo_list)
 
-    idx_from = per_page * (page - 1)
-    idx_to = per_page * page
-    assert actual_data_ids == expected_data_ids[idx_from:idx_to]
+    # ******************
+    # テスト実行
+    # ******************
+    target_todo_list_id = db_todo_list.id
+    response = client.post(f"/lists/{target_todo_list_id}/items", json={
+        "title": "",
+        "description": "A test record for station17.",
+        "due_at": "2024-09-08T16:47:23",
+    })
+
+    # ******************
+    # 実行結果の検証開始
+    # ******************
+    # ステータスコードの確認
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+def test_put_todo_item_404_list_not_found(db_session) -> None:
+    """Station17合格判定テストコード."""
+    # ******************
+    # 事前準備
+    # ******************
+    # テスト用にTODOリストをインサート
+    db_todo_list = list_model.ListModel(title="station17_test", description="A test record for station17.")
+    db_session.add(db_todo_list)
+    db_session.commit()
+    db_session.refresh(db_todo_list)
+
+    # テスト用にTODO項目をインサート
+    db_todo_item = item_model.ItemModel(
+        todo_list_id=db_todo_list.id,
+        title="station17_test",
+        description="A test record for station17.",
+        status_code=1,
+    )
+    db_session.add(db_todo_item)
+    db_session.commit()
+    db_session.refresh(db_todo_item)
+
+    target_todo_item_id = db_todo_item.id
+
+    # ******************
+    # テスト実行
+    # ******************
+    response = client.put(
+        f"/lists/-1/items/{target_todo_item_id}",
+        json={
+            "title": "updated_station17_test",
+            "description": "An updated test record for station17.",
+            "due_at": "2024-09-08T16:54:53",
+            "complete": True,
+        },
+    )
+
+    # ******************
+    # 実行結果の検証開始
+    # ******************
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_put_todo_item_404_item_not_found(db_session) -> None:
+    """Station17合格判定テストコード."""
+    # ******************
+    # 事前準備
+    # ******************
+    # テスト用にTODOリストをインサート
+    db_todo_list = list_model.ListModel(title="station17_test", description="A test record for station17.")
+    db_session.add(db_todo_list)
+    db_session.commit()
+    db_session.refresh(db_todo_list)
+
+    target_todo_list_id = db_todo_list.id
+
+    # ******************
+    # テスト実行
+    # ******************
+    response = client.put(
+        f"/lists/{target_todo_list_id}/items/-1",
+        json={
+            "title": "updated_station17_test",
+            "description": "An updated test record for station17.",
+            "due_at": "2024-09-08T16:54:53",
+            "complete": True,
+        },
+    )
+
+    # ******************
+    # 実行結果の検証開始
+    # ******************
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_delete_todo_item_404_list_not_found(db_session) -> None:
+    """Station17合格判定テストコード."""
+    # ******************
+    # 事前準備
+    # ******************
+    # テスト用にTODOリストをインサート
+    db_todo_list = list_model.ListModel(title="station17_test", description="A test record for station17.")
+    db_session.add(db_todo_list)
+    db_session.commit()
+    db_session.refresh(db_todo_list)
+
+    # テスト用にTODO項目をインサート
+    db_todo_item = item_model.ItemModel(
+        todo_list_id=db_todo_list.id,
+        title="station17_test",
+        description="A test record for station17.",
+        status_code=1,
+    )
+    db_session.add(db_todo_item)
+    db_session.commit()
+
+    # ******************
+    # テスト実行
+    # ******************
+    target_todo_item_id = db_todo_item.id
+    response = client.delete(f"/lists/-1/items/{target_todo_item_id}")
+
+    # ******************
+    # 実行結果の検証開始
+    # ******************
+    # ステータスコードの確認
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_delete_todo_item(db_session) -> None:
+    """Station17合格判定テストコード."""
+    # ******************
+    # 事前準備
+    # ******************
+    # テスト用にTODOリストをインサート
+    db_todo_list = list_model.ListModel(title="station17_test", description="A test record for station17.")
+    db_session.add(db_todo_list)
+    db_session.commit()
+    db_session.refresh(db_todo_list)
+
+    # ******************
+    # テスト実行
+    # ******************
+    target_todo_list_id = db_todo_list.id
+    response = client.delete(f"/lists/{target_todo_list_id}/items/-1")
+
+    # ******************
+    # 実行結果の検証開始
+    # ******************
+    # ステータスコードの確認
+    assert response.status_code == status.HTTP_404_NOT_FOUND

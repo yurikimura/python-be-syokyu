@@ -4,21 +4,16 @@ from app.database import SessionLocal
 from app.models import item_model, list_model
 
 
-@pytest.fixture
+@pytest.fixture(autouse=False)
 def db_session():
     db = SessionLocal()
     try:
+        db.query(list_model.ListModel).delete()
+        db.query(item_model.ItemModel).delete()
+        db.commit()
         yield db
     finally:
+        db.query(list_model.ListModel).delete()
+        db.query(item_model.ItemModel).delete()
+        db.commit()
         db.close()
-
-
-@pytest.fixture(autouse=True)
-def db_clear_all(db_session):
-    db_session.query(list_model.ListModel).delete()
-    db_session.query(item_model.ItemModel).delete()
-    db_session.commit()
-    yield
-    db_session.query(list_model.ListModel).delete()
-    db_session.query(item_model.ItemModel).delete()
-    db_session.commit()

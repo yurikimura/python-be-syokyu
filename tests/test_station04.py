@@ -1,17 +1,13 @@
+from fastapi import status
 from fastapi.testclient import TestClient
-from sqlalchemy import inspect
 
-from app.database import engine
 from app.main import app
 
 client = TestClient(app)
 
 
-def test_tables():
+def test_get_health():
     """Station04合格判定テストコード."""
-    inspector = inspect(engine)
-
-    target_table_names = ["todo_lists", "todo_items"]
-    existed_table = [table_name for table_name in inspector.get_table_names() if table_name in target_table_names]
-
-    assert sorted(target_table_names) == sorted(existed_table)
+    response = client.get("/health")
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {"status": "ok"}

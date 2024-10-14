@@ -1,80 +1,66 @@
-from fastapi import status
+from importlib import import_module
+
+import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.models import item_model, list_model
 
 client = TestClient(app)
 
-NUM_OF_RECORDS = 15
+
+@pytest.mark.parametrize(
+    "import_path",
+    [
+        ("app.routers.item_router"),
+        ("app.routers.list_router"),
+        ("app.schemas.item_schema"),
+        ("app.schemas.list_schema"),
+        ("app.models.item_model"),
+        ("app.models.list_model"),
+        ("app.crud.item_crud"),
+        ("app.crud.list_crud"),
+    ],
+)
+def test_organize_project(import_path: str) -> None:
+    """Station14合格判定テストコード.
+
+    モジュールが意図した配置になっているかをテスト.
+    """
+    try:
+        import_module(import_path)
+    except ImportError as e:
+        msg = f"{import_path}がImportできませんでした"
+        raise AssertionError(msg) from e
 
 
-def test_get_todo_lists(db_session) -> None:
-    """Station14合格判定テストコード."""
-    db_todo_lists = [list_model.ListModel(
-        title=f"station14_test_{str(i).zfill(3)}",
-        description="A test record for station14.") for i in range(NUM_OF_RECORDS)]
-    db_session.add_all(db_todo_lists)
-    db_session.commit()
-    for x in db_todo_lists:
-        db_session.refresh(x)
+def test_proper_endpoints_exist() -> None:
+    """Station14合格判定テストコード.
 
-    # ******************
-    # テスト実行
-    # ******************
-    response = client.get("/lists")
+    ルーティングの定義がデグレすることなく存在しているかをテスト.
+    """
+    response = client.get("/openapi.json")
 
-    # ******************
-    # 実行結果の検証開始
-    # ******************
+    expected_endpoints = [
+        "GET /lists/",
+        "POST /lists/",
+        "GET /lists/{todo_list_id}",
+        "PUT /lists/{todo_list_id}",
+        "DELETE /lists/{todo_list_id}",
+        "GET /lists/{todo_list_id}/items/",
+        "POST /lists/{todo_list_id}/items/",
+        "GET /lists/{todo_list_id}/items/{todo_item_id}",
+        "PUT /lists/{todo_list_id}/items/{todo_item_id}",
+        "DELETE /lists/{todo_list_id}/items/{todo_item_id}",
+    ]
 
-    # ステータスコードの確認
-    assert response.status_code == status.HTTP_200_OK
+    open_api_schema = response.json()
 
-    # レスポンスBodyの確認
-    response_body = response.json()
+    endpoints = []
+    for api_path, detail in open_api_schema["paths"].items():
+        for method in detail:
+            endpoints.append(f"{method.upper()} {api_path}")  # noqa: PERF401
 
-    actual_data_ids = sorted([x["id"]  for x in response_body])
-    expected_data_ids = sorted([x.id  for x in db_todo_lists])
-    assert actual_data_ids == expected_data_ids
-
-
-def test_get_todo_items(db_session) -> None:
-    """Station14合格判定テストコード."""
-    db_todo_lists = [list_model.ListModel(
-        title=f"station14_test_{str(i).zfill(3)}",
-        description="A test record for station14.") for i in range(NUM_OF_RECORDS)]
-    db_session.add_all(db_todo_lists)
-    db_session.commit()
-    for x in db_todo_lists:
-        db_session.refresh(x)
-
-    todo_list_id = db_todo_lists[0].id
-    db_todo_items = [item_model.ItemModel(
-        todo_list_id=todo_list_id,
-        title=f"station14_test_{str(i).zfill(3)}",
-        description="A test record for station14.", status_code=1) for i in range(NUM_OF_RECORDS)]
-    db_session.add_all(db_todo_items)
-    db_session.commit()
-    for x in db_todo_items:
-        db_session.refresh(x)
-
-    # ******************
-    # テスト実行
-    # ******************
-    todo_list_id = db_todo_lists[0].id
-    response = client.get(f"/lists/{todo_list_id}/items")
-
-    # ******************
-    # 実行結果の検証開始
-    # ******************
-
-    # ステータスコードの確認
-    assert response.status_code == status.HTTP_200_OK
-
-    # レスポンスBodyの確認
-    response_body = response.json()
-
-    actual_data_ids = sorted([x["id"]  for x in response_body])
-    expected_data_ids = sorted([x.id  for x in db_todo_items])
-    assert actual_data_ids == expected_data_ids
+    for expected in expected_endpoints:
+        if expected not in endpoints:
+            msg = f"{expected}が存在しません。"
+            raise AssertionError(msg)

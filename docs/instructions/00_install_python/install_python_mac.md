@@ -2,6 +2,8 @@
 
 この手順では macOS 環境下における `Python 3.12` のインストール手順を説明しています。
 
+なお、この Railway では、Python や各種パッケージを動作確認済みのバージョン固定で導入する手順としております。
+
 ## 前提
 - [Railway 準備編](https://techbowl.notion.site/Railway-ceba695d5014460e9733c2a46318cdec)にて必要なツールのインストールが完了していること。 ( ここでは homebrew がインストール済みであることを前提としています。 )
 
@@ -35,13 +37,14 @@ Python パッケージ管理ツールには pip 以外にもさまざまなも�
     4. VSCode にて 「 Cmd + Shift + P 」 で VSCode のコマンドパレットを開きます。コマンドパレットにて 「 `Python: インタープリターを選択` 」を選択します。
 
         以下のように途中まで入力すると選択肢が絞られていって見つけやすくなると思います。
-        ![](vscode_select_python_interpreter.png)
+        ![](../../images/vscode_select_python_interpreter.png)
     5. 選択後、インタープリターの一覧が表示されますが、以下の`./.venv/bin/python` がパスとして表示されているものを選択してください。
-        ![](vscode_python_interpreter_list.png)
+        ![](../../images/vscode_python_interpreter_list.png)
     6. 上記で対応完了となります。現在どこの Python インタープリターが選択されているかは、 VSCode で`.py`ファイルを開くと、 VSCode のウィンドウ最下部に表示されます。
-        ![](vscode_current_python_interpreter.png)
+        ![](../../images/vscode_current_python_interpreter.png)
     7. また、`.venv`配下の Python インタープリターを選択していると、 VSCode 上でターミナルを新規で開いた時に予めターミナル上でも venv の仮想環境が有効になった状態でターミナルが起動されます。
-    ![](vscode_terminal_with_venv.png)
+    ![](../../images/vscode_terminal_with_venv.png)
+    →「(.venv)」という文言が表示されている。
 2. 利用する Python パッケージを Python 仮想環境配下にインストール
     1. 上記の手順にて VSCode のターミナルで venv が有効になっている状態で立ち上がる旨説明しました。
     2. venv が有効かされている状態のターミナルで以下を実行し、仮想環境下で必要な Python パッケージをインストールします。

@@ -2,6 +2,8 @@
 
 この手順では Windows 環境下における `Python 3.12` のインストール手順を説明しています。
 
+なお、この Railway では、Python や各種パッケージを動作確認済みのバージョン固定で導入する手順としております。
+
 ## Python のインストール
 1. Windows ユーザーの場合、  以下にアクセスし、 Python3.12 の最新版をインストールしましょう。
     1. [python.org - Downloads](https://www.python.org/downloads/)
@@ -39,13 +41,14 @@ Python パッケージ管理ツールには pip 以外にもさまざまなも�
     4. VSCodeにて 「 Cmd + Shift + P 」 でVSCodeのコマンドパレットを開きます。コマンドパレットにて 「 `Python: インタープリターを選択` 」を選択します。
 
         以下のように途中まで入力すると選択肢が絞られていって見つけやすくなると思います。
-        ![](vscode_select_python_interpreter.png)
+        ![](../../images/vscode_select_python_interpreter.png)
     5. 選択後、インタープリターの一覧が表示されますが、以下の`.\.venv\bin\python` がパスとして表示されているものを選択してください。
         ![](../../images/vscode_python_interpreter_list.png)
     6. 上記で対応完了となります。現在どこの Python インタープリターが選択されているかは、 VSCode で`.py`ファイルを開くと、 VSCode のウィンドウ最下部に表示されます。
         ![](../../images/vscode_current_python_interpreter.png)
     7. また、`.venv`配下の Python インタープリターを選択していると、 VSCode 上でターミナルを新規で開いた時に予めターミナル上でも venv の仮想環境が有効になった状態でターミナルが起動されます。
-    ![](vscode_terminal_with_venv.png)
+    ![](../../images/vscode_terminal_with_venv.png)
+    →「(.venv)」という文言が表示されている。
 2. 利用するPythonパッケージをPython仮想環境配下にインストール
     1. 上記の手順にて VSCode のターミナルで venv が有効になっている状態で立ち上がる旨説明しました。
     2. venv が有効かされている状態のターミナルで以下を実行し、仮想環境下で必要な Python パッケージをインストールします。

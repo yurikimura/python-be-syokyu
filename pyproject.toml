@@ -5,7 +5,7 @@ testpaths = [
 ]
 
 [tool.pytest_env]
-DB_NAME = "python_stations_4_test"
+DB_NAME = "python_be_syokyu_test"
 
 [tool.ruff]
 line-length = 200

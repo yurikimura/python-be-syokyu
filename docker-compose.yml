@@ -6,15 +6,15 @@ services:
       context: ./infra/docker/db
       dockerfile: Dockerfile
     image: mysql:8
-    container_name: "python-stations-4-db"
+    container_name: "python-be-syokyu-db"
     hostname: db
     environment:
       MYSQL_ROOT_PASSWORD: root_pass
-      MYSQL_DATABASE: python_stations_4
+      MYSQL_DATABASE: python_be_syokyu
       MYSQL_USER: dev
       MYSQL_PASSWORD: dev
     volumes:
-      - python-stations-4-db-data:/var/lib/mysql
+      - python-be-syokyu-db-data:/var/lib/mysql
       - ./infra/docker/db/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf
       - ./infra/docker/db/initdb.d:/docker-entrypoint-initdb.d
     ports:
@@ -22,7 +22,7 @@ services:
     tty: true
 
   app:
-    container_name: "python-stations-4-app"
+    container_name: "python-be-syokyu-app"
     depends_on:
       - db
     build:
@@ -38,7 +38,7 @@ services:
     ports:
       - "${APP_PORT:-18008}:${APP_PORT:-18008}"
     volumes:
-      - .:/opt/python-stations-4-app
+      - .:/opt/python-be-syokyu-app
     command: fastapi dev main.py --port=${APP_PORT:-18008} --host=0.0.0.0
 
   adminer:
@@ -51,5 +51,5 @@ services:
         ADMINER_DESIGN: galkaev
 
 volumes:
-  python-stations-4-db-data:
+  python-be-syokyu-db-data:
     driver: local

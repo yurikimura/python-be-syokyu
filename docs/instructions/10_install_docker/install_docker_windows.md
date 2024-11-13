@@ -1,6 +1,6 @@
 # Docker Desktop セットアップ - Windows 編
 
-この手順では Windows 環境下における `Docker Desktop` のインストール手順を説明しています。
+この手順では Windows 環境下における`Docker Desktop`のインストール手順を説明しています。
 
 ## Docker Desktop インストール
 1. [Install Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/) から Docker Desktop をダウンロードし、インストールします。
@@ -15,15 +15,16 @@ Docker では実行環境としてコンテナというものを用意します�
 
 以下の手順にて、今回の Railway で使用する Docker コンテナを作成 ( コンテナをビルド ) します。
 
-1.  Visual Studio Codeにて、今回の Railway で使用する、 Clone 済みのテンプレートリポジトリのフォルダを開きます。
-2.  Visual Studio Codeからターミナルを起動しアプリケーション実行環境を構築します。
+1. VSCode にて、今回の Railway で使用する Clone 済みのテンプレートリポジトリのフォルダを開く。
+2. VSCode の拡張機能で Docker をインストールする。
+3. VSCode からターミナルを起動しアプリケーション実行環境を構築する。
     1. 左上のターミナル -> 新しいターミナルを選択して、ターミナルを起動します。
-    2. 以下のコマンドを実行し、アプリケーションの環境固有 ( データベースへの接続情報等 ) の設定や機密情報を格納する `.env` ファイルを作成します。
+    2. 以下のコマンドを実行し、アプリケーションの環境固有 ( データベースへの接続情報等 ) の設定や機密情報を格納する`.env`ファイルを作成します。
     ```bash
-    cp .env.example .env
+    cp .env.sample .env
     ```
-    3. 以下のコマンドを実行し、Dockerコンテナのビルドを行います。
+    3. 以下のコマンドを実行し、Docker コンテナのビルドを行います。
     ```bash
     docker compose build --no-cache
     ```
-   ※ Dockerコンテナのビルドおよび起動には時間がかかる場合があります。コマンドが正常に完了するまで待ってください。
+   ※ Docker コンテナのビルドおよび起動には時間がかかる場合があります。コマンドが正常に完了するまで待ってください。

@@ -17,7 +17,7 @@ Python Railway の問題を解くために必要な下記ツールのインス�
 何かあった際は、まずそちらを確認しましょう。
 
 ## 手順
-1. Pythonのセットアップ
+1. Python のセットアップ
     - [こちら](./instructions/00_install_python/install_python_windows.md.md) を参照ください。
 2. Docker のセットアップ
     - [こちら](./instructions/10_install_docker/install_docker_windows.md.md) を参照ください。
@@ -29,5 +29,5 @@ Python Railway の問題を解くために必要な下記ツールのインス�
 
 ---
 
-以上でPython Backend Railwayに取り組むための環境が整いました。
-Visual Studio Codeを使用してコードを編集し、「TechTrain Railway」という拡張機能から「できた!」と書かれた青いボタンをクリックすると判定が始まります。
+以上で Python Backend Railway に取り組むための環境が整いました。
+Visual Studio Code を使用してコードを編集し、「TechTrain Railway」という拡張機能から「できた!」と書かれた青いボタンをクリックすると判定が始まります。

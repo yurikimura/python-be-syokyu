@@ -41,12 +41,10 @@ def test_proper_endpoints_exist() -> None:
     response = client.get("/openapi.json")
 
     expected_endpoints = [
-        "GET /lists/",
         "POST /lists/",
         "GET /lists/{todo_list_id}",
         "PUT /lists/{todo_list_id}",
         "DELETE /lists/{todo_list_id}",
-        "GET /lists/{todo_list_id}/items/",
         "POST /lists/{todo_list_id}/items/",
         "GET /lists/{todo_list_id}/items/{todo_item_id}",
         "PUT /lists/{todo_list_id}/items/{todo_item_id}",

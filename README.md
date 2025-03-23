@@ -16,6 +16,15 @@ Python Railway の問題を解くために必要な下記ツールのインス�
 
 Python や Docker のセットアップについては、実際にStationに取り組みながら実施していきます。
 
+※以下セットアップテキストへのリンクは実際のStationの中で対応する手順です。<br>
+そのため、こちらのリンクは見直す方向けのリンクである事をご留意ください。
+- Pythonセットアップ
+  - [Windows](./docs/instructions/00_install_python/install_python_windows.md)
+  - [MacOS](./docs/instructions/00_install_python/install_python_mac.md)
+- Dockerセットアップ
+  - [Windows](./docs/instructions/10_install_docker/install_docker_windows.md)
+  - [MacOS](./docs/instructions/10_install_docker/install_docker_mac.md)
+
 ## このRailwayについて
 このRailwayで扱う技術要素やカバーする範囲、利用する開発環境について説明します。
 

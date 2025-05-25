@@ -78,6 +78,22 @@ class ResponseTodoList(BaseModel):
     updated_at: datetime = Field(title="datetime that the item was updated")
 
 
-@app.get("/hello", tags=["Hello"])
+@app.get("/echo", tags=["Hello"])
 def get_hello():
-    return {"Message": "Hello FastAPI!"}
+    return {"Message": "Hello TechTrain!"}
+
+@app.get("/plus")
+def plus(a: int, b: int):
+    """足し算"""
+    return a + b
+
+@app.get("/greet", tags=["Hello"])
+def greet(message: str, name: str):
+    """messageとnameを結合して返却する"""
+    return {"Message": f"{message} {name}!"}
+
+@app.get("/health", tags=["System"])
+def get_health():
+    """ヘルスチェック用エンドポイント"""
+    return {"status": "ok"}
+
